@@ -16,8 +16,9 @@ server.get("/", (req, res) => {
   res.send("api working");
 });
 
-// get all zoos
-server.get("/api/zoos", (req, res) => {
+// get all zoos https://expressjs.com/en/4x/api.html#app.route route
+server.route("/api/zoos")
+.get((req, res) => {
   db("zoos")
     .then(zoos => {
       res.status(200).json(zoos);
@@ -25,9 +26,7 @@ server.get("/api/zoos", (req, res) => {
     .catch(err => {
       res.status(500).json(err);
     });
-});
-// post to zoos
-server.post("/api/zoos", (req, res) => {
+}).post((req, res) => {
   if (!req.body.name) {
     res.status(400).json({ Error_Message: "Provide Zoo Name" });
   } else {
@@ -79,44 +78,44 @@ server.put("/api/zoos/:zooID", (req, res) => {
   db("zoos")
     .where({ id: req.params.zooID })
     .update(req.body)
-    .then(count=>{
+    .then(count => {
       console.log(isInt(count));
       if (count) {
         res.status(200).json(count);
       } else {
-        res.status(404).json({ message: 'Zoo not found' });
+        res.status(404).json({ message: "Zoo not found" });
       }
     })
     .catch(err => res.status(500).json(err));
 });
 
-server.get('/api/bears', (req, res) => {
-  db('bears')
+server.get("/api/bears", (req, res) => {
+  db("bears")
     .then(bears => {
       res.status(200).json(bears);
     })
     .catch(err => res.status(500).json(err));
 });
 
-server.get('/api/bears/:id', (req, res) => {
-  db('bears')
+server.get("/api/bears/:id", (req, res) => {
+  db("bears")
     .where({ id: req.params.id })
     .then(bear => {
       if (bear) {
         res.status(200).json(bear);
       } else {
-        res.status(404).json({ message: 'bear not found' });
+        res.status(404).json({ message: "bear not found" });
       }
     });
 });
 
 // add panda
-server.post('/api/bears', (req, res) => {
+server.post("/api/bears", (req, res) => {
   // db.insert(req.body).into('bears').then().catch()
-  db('bears')
+  db("bears")
     .insert(req.body)
     .then(ids => {
-      db('bears')
+      db("bears")
         .where({ id: ids[0] })
         .then(bear => {
           res.status(201).json(bear);
@@ -126,8 +125,8 @@ server.post('/api/bears', (req, res) => {
 });
 
 // delete panda
-server.delete('/api/bears/:id', (req, res) => {
-  db('bears')
+server.delete("/api/bears/:id", (req, res) => {
+  db("bears")
     .where({ id: req.params.id })
     .del()
     .then(count => {
@@ -136,17 +135,17 @@ server.delete('/api/bears/:id', (req, res) => {
     .catch(err => res.status(500).json(err));
 });
 
-server.put('/api/bears/:id', (req, res) => {
+server.put("/api/bears/:id", (req, res) => {
   const changes = req.body;
 
-  db('bears')
+  db("bears")
     .where({ id: req.params.id })
     .update(changes)
     .then(count => {
       if (count) {
         res.status(200).json(count);
       } else {
-        res.status(404).json({ message: 'Bear not found' });
+        res.status(404).json({ message: "Bear not found" });
       }
     })
     .catch(err => res.status(500).json(err));
